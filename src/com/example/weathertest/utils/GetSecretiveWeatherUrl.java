@@ -1,4 +1,4 @@
-package com.example.weathertest.activity;
+package com.example.weathertest.utils;
 
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;

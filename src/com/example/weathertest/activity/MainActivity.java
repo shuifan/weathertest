@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.weathertest.R;
+import com.example.weathertest.utils.GetSecretiveWeatherUrl;
 
 import android.os.Bundle;
 import android.os.Handler;
