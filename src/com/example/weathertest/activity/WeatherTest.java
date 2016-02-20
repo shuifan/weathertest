@@ -29,7 +29,7 @@ import android.widget.Toast;
  * 此类作为访问 中国天气网的天气api的一个测试类
  * 实现 获取当前时间 的 天气预报的功能
  */
-public class MainActivity extends Activity implements android.view.View.OnClickListener{
+public class WeatherTest extends Activity implements android.view.View.OnClickListener{
 
 	//此变量作为handler中辨别接收数据来源的标志
 	private static final int SHOW_TEXT=0; 
@@ -39,7 +39,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	private Button sendRequest;
 	
 	//用于加密的APIKey 来自中国天气网
-	private final String APIKey = "39272f_SmartWeatherAPI_1f5a3b6"; 
+	public static final String APIKey = "39272f_SmartWeatherAPI_1f5a3b6"; 
 	
 	//用handler来接收子线程的数据处理并更新UI
 	private Handler handler=new Handler(){
@@ -64,8 +64,8 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 					String dayTemp=today.getString("fc");
 					String nightTemp=today.getString("fd");
 					
-					Toast.makeText(MainActivity.this, province+city+county+"  "+date, Toast.LENGTH_SHORT).show();
-					Toast.makeText(MainActivity.this, dayTemp+"~"+nightTemp, Toast.LENGTH_SHORT).show();
+					Toast.makeText(WeatherTest.this, province+city+county+"  "+date, Toast.LENGTH_SHORT).show();
+					Toast.makeText(WeatherTest.this, dayTemp+"~"+nightTemp, Toast.LENGTH_SHORT).show();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -155,7 +155,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	}
 	
     //得到加密之后地址的函数
-    private String getSecretiveUrl(String whiteUrlS,String whiteUrl) {
+    public static String getSecretiveUrl(String whiteUrlS,String whiteUrl) {
     	
     	try {
     		

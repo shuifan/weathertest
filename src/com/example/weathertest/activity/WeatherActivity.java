@@ -1,5 +1,9 @@
 package com.example.weathertest.activity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import com.example.weathertest.R;
 import com.example.weathertest.utils.HttpUtil;
 import com.example.weathertest.utils.HttpUtil.HttpCallbackListener;
@@ -11,6 +15,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -47,6 +52,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	
 	//更新天气按钮
 	private Button refreshWeather;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -114,8 +120,29 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	
 	//根据天气代号查询对应的天气
 	private void queryWeatherInfo(String weatherCode) {
-		String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html"; 
-		queryFromServer(address, "weatherCode"); 
+		
+		//再次做出更改 ，改用 中国天气网新的API 获取更全面的天气
+		
+		//得到当前的时间 以 yyyyMMddHHmm 格式
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
+		String currentDate=sdf.format(new Date());
+		
+		//此地址用于加密运算
+		String whiteUrlS="http://open.weather.com.cn/data/?areaid="+weatherCode+"&type=forecast_v&date="+currentDate+"&appid=bcbccb513492a6c5";
+		
+		//此地址用于最后的地址拼接，因为最终地址只取appid的前六位
+		String whiteUrl="http://open.weather.com.cn/data/?areaid="+weatherCode+"&type=forecast_v&date="+currentDate+"&appid=bcbccb";
+		
+		//得到最终的 访问地址
+		String finalUrl=Utility.getSecretiveUrl(whiteUrlS, whiteUrl);
+		
+//		String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html"; 
+		if (finalUrl != null) {
+			queryFromServer(finalUrl, "weatherCode"); 
+		}else {
+			Log.d("Error", "fail to get finalUrl");
+		}
+		
 	}
 	
 	//根据传入的地址与类型来查询对应的 天气代号或者天气
@@ -124,6 +151,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 			
 			@Override
 			public void onFinish(String response) {
+				
 				if ("countyCode".equals(type)) {
 					if (!TextUtils.isEmpty(response)) {
 						String[] array=response.split("\\|");

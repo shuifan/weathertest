@@ -1,9 +1,11 @@
 package com.example.weathertest.utils;
 
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.R.string;
@@ -22,6 +24,9 @@ import com.example.weathertest.model.Province;
  */
 
 public class Utility {
+	
+	//用于加密的APIKey 来自中国天气网
+		public static final String APIKey = "39272f_SmartWeatherAPI_1f5a3b6"; 
 	
 	//解析省级数据
 	public synchronized static boolean handleProvincesResponse(CoolWeatherDB coolWeatherDB,String response) {
@@ -86,17 +91,36 @@ public class Utility {
 	
 	//解析服务器返回的天气数据，并且将其存储到本地
 	public static void handleWeatherResponse(Context context,String response) {
+		//更改此部分 以 解析从 新的API得到的数据
 		try {
 			JSONObject jsonObject=new JSONObject(response);
-			JSONObject weatherInfo=jsonObject.getJSONObject("weatherinfo");
-			String cityName=weatherInfo.getString("city");
-			String weatherCode=weatherInfo.getString("cityid");
-			String temp1=weatherInfo.getString("temp1");
-			String temp2=weatherInfo.getString("temp2");
-			String weatherDesp=weatherInfo.getString("weather");
-			String publishTime=weatherInfo.getString("ptime");
+			//此为解析的 以前的网上流传的天气接口的数据
+//			JSONObject weatherInfo=jsonObject.getJSONObject("weatherinfo");
+//			String cityName=weatherInfo.getString("city");
+//			String weatherCode=weatherInfo.getString("cityid");
+//			String temp1=weatherInfo.getString("temp1");
+//			String temp2=weatherInfo.getString("temp2");
+//			String weatherDesp=weatherInfo.getString("weather");
+//			String publishTime=weatherInfo.getString("ptime");
+			
+			//以下解析的是 使用中国天气网API得到的数据
+			JSONObject c=jsonObject.getJSONObject("c");
+			String weatherCode=c.getString("c1");
+			String county=c.getString("c3");
+			String city=c.getString("c5");
+			String province=c.getString("c7");
+			
+			JSONObject f=jsonObject.getJSONObject("f");
+			String date=f.getString("f0");
+			
+			JSONArray weather=f.getJSONArray("f1");
+			JSONObject today=weather.getJSONObject(0);
+			String dayTemp=today.getString("fc");
+			String nightTemp=today.getString("fd");
 			//将此数据保存起来
-			saveWeatherInfo(context,cityName,weatherCode,temp1,temp2,weatherDesp,publishTime);
+//			saveWeatherInfo(context,cityName,weatherCode,temp1,temp2,weatherDesp,publishTime);
+//			saveWeatherInfo(context, province, city, county, date, dayTemp, nightTemp);
+			saveWeatherInfo(context, province+city+county,weatherCode , nightTemp, dayTemp, null, date);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -118,7 +142,22 @@ public class Utility {
 		editor.commit();//提交
 	}
 	
-	
+	//得到加密之后地址的函数
+    public static String getSecretiveUrl(String whiteUrlS,String whiteUrl) {
+    	
+    	try {
+    		
+    		String key=GetSecretiveWeatherUrl.standardURLEncoder(whiteUrlS, APIKey);
+    		
+    		String finalUrl=whiteUrl+"&key="+key;
+    		return finalUrl;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+		return null;
+		
+	}
 	
 	
 	
