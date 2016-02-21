@@ -135,7 +135,11 @@ public class Utility {
 		editor.putString("city_name", cityName);
 		editor.putString("weather_code", weatherCode);
 		editor.putString("temp1", temp1);
-		editor.putString("temp2", temp2);
+		//加一则判断 以避免白天温度为空 的情况
+		if (temp2!=null) {
+			editor.putString("temp2", temp2);
+		}
+		
 		editor.putString("weather_desp", weatherDesp);
 		editor.putString("publish_time", publishTime);
 		editor.putString("current_date", sdf.format(new Date()));//将当前的日期格式化为 需要的格式
