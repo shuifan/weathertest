@@ -176,7 +176,15 @@ public class WeatherActivity extends Activity implements OnClickListener{
 			
 			@Override
 			public void onError(Exception e) {
-				publishText.setText("同步失败");
+				//此方法 在子线程中执行，若要更新UI，需会UI线程
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						publishText.setText("同步失败");
+					}
+				});
+				
 			}
 		});
 	}
